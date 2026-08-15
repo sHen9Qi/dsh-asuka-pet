@@ -16,13 +16,15 @@
 
 ```sh
 # 独立安装桌宠插件
-dsh plugin --profile web add asuka-pet所在路径
+git clone https://github.com/sHen9Qi/asuka-pet.git
+cd asuka-pet
+dsh plugin --profile web add asuka-pet
 ```
 
 ## 卸载
 
 ```sh
-dsh plugin --profile web remove asuka-pet
+dsh plugin --profile web remove @dsh-external/dsh-client-ui-asuka-pet
 ```
 
 ## 开发构建
