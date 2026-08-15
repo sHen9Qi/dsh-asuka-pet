@@ -1,0 +1,221 @@
+/* =============================================================================
+ * asuka-pet · standalone desktop companion CSS
+ * EVA Asuka theme — pure #E83A20 / #FFB366 / #0A0610 / #FFF8E8
+ * Pet floats in lower-right; AT Field ring appears only while dsh is running
+ * ========================================================================== */
+
+/* ---- Pet stage ---- */
+[data-asuka-pet='stage'] {
+  --eva-red:   #E83A20;
+  --eva-amber: #FFB366;
+  --eva-cream: #FFF8E8;
+  --eva-white: #FFFFFF;
+  --eva-ink:   #1A0A10;
+  --eva-deep:  #0A0610;
+  --eva-glass: rgba(10, 6, 16, 0.75);
+  --eva-stroke: rgba(255, 184, 102, 0.35);
+  --pet-size: clamp(108px, 13vw, 176px);
+
+  position: fixed;
+  right: clamp(10px, 1.2vw, 20px);
+  bottom: clamp(10px, 1.2vw, 20px);
+  width: var(--pet-size);
+  height: var(--pet-size);
+  z-index: 22;
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transition: transform 240ms cubic-bezier(.18,.78,.32,1.18);
+}
+[data-asuka-pet='stage'][data-dragging='true'] { cursor: grabbing; }
+[data-asuka-pet='stage'][data-hovering='true'] { transform: translateY(-8px) scale(1.05); }
+
+/* ---- Speech bubble ---- */
+[data-asuka-pet='stage'] > [data-asuka-pet='bubble'] {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%) translateY(8px) scale(0.94);
+  transform-origin: bottom center;
+  min-width: 130px;
+  max-width: 210px;
+  padding: 8px 14px;
+  background: var(--eva-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--eva-cream);
+  border: 1px solid var(--eva-white);
+  border-radius: 12px;
+  box-shadow: none;
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease, transform 200ms cubic-bezier(.18,.78,.32,1.18);
+  z-index: 1;
+}
+[data-asuka-pet='stage'][data-bubble='visible'] > [data-asuka-pet='bubble'] {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+/* Bubble tail */
+[data-asuka-pet='stage'] > [data-asuka-pet='bubble']::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 10px;
+  height: 10px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--eva-glass);
+  border-right: 1px solid var(--eva-white);
+  border-bottom: 1px solid var(--eva-white);
+}
+/* Bubble tail borders follow the bubble colour too */
+[data-asuka-pet='stage'][data-mood='idle'] > [data-asuka-pet='bubble']::after {
+  border-color: rgba(255, 204, 148, 0.9);
+}
+[data-asuka-pet='stage'][data-mood='thinking'] > [data-asuka-pet='bubble']::after {
+  border-color: rgba(164, 205, 255, 0.9);
+}
+[data-asuka-pet='stage'][data-mood='speaking'] > [data-asuka-pet='bubble']::after {
+  border-color: rgba(255, 219, 112, 0.9);
+}
+[data-asuka-pet='stage'][data-mood='tool'] > [data-asuka-pet='bubble']::after {
+  border-color: rgba(196, 178, 255, 0.9);
+}
+
+/* Mood bubble tints — border follows the bubble colour */
+[data-asuka-pet='stage'][data-mood='idle'] > [data-asuka-pet='bubble'] {
+  background: rgba(255, 204, 148, 0.72);
+  border-color: rgba(255, 204, 148, 0.9);
+  color: var(--eva-ink);
+}
+[data-asuka-pet='stage'][data-mood='thinking'] > [data-asuka-pet='bubble'] {
+  background: rgba(164, 205, 255, 0.78);
+  border-color: rgba(164, 205, 255, 0.9);
+  color: var(--eva-ink);
+}
+[data-asuka-pet='stage'][data-mood='speaking'] > [data-asuka-pet='bubble'] {
+  background: rgba(255, 219, 112, 0.75);
+  border-color: rgba(255, 219, 112, 0.9);
+  color: var(--eva-ink);
+}
+[data-asuka-pet='stage'][data-mood='tool'] > [data-asuka-pet='bubble'] {
+  background: rgba(196, 178, 255, 0.72);
+  border-color: rgba(196, 178, 255, 0.9);
+  color: var(--eva-ink);
+}
+
+/* ---- Pet figure ---- */
+[data-asuka-pet='figure'] {
+  width: 100%;
+  height: auto;
+  filter: none;
+  pointer-events: none;
+  transform-origin: bottom center;
+  animation: petFloat 3.6s ease-in-out infinite;
+}
+@keyframes petFloat {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50%      { transform: translateY(-5px) rotate(1.5deg); }
+}
+
+/* Speaking: bounce */
+[data-asuka-pet='stage'][data-mood='speaking'] [data-asuka-pet='figure'] {
+  animation: petBounce 0.9s ease-in-out infinite;
+}
+@keyframes petBounce {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05, 0.95); }
+}
+
+/* Thinking: thoughtful sway */
+[data-asuka-pet='stage'][data-mood='thinking'] [data-asuka-pet='figure'] {
+  animation: petThink 2.2s ease-in-out infinite;
+}
+@keyframes petThink {
+  0%, 100% { transform: rotate(-6deg) translateY(0); }
+  50%      { transform: rotate(6deg) translateY(-3px); }
+}
+
+/* Tool use: busy tapping — double hop with tilt and squash */
+[data-asuka-pet='stage'][data-mood='tool'] [data-asuka-pet='figure'] {
+  animation: petWork 0.5s ease-in-out infinite;
+}
+@keyframes petWork {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+  20%      { transform: translateY(-8px) rotate(-4deg) scale(1.05, 0.95); }
+  45%      { transform: translateY(0) rotate(0deg) scale(0.95, 1.05); }
+  70%      { transform: translateY(-8px) rotate(4deg) scale(1.05, 0.95); }
+  90%      { transform: translateY(0) rotate(0deg) scale(0.97, 1.03); }
+}
+
+/* Click: pop */
+[data-asuka-pet='stage'][data-clicked='true'] [data-asuka-pet='figure'] {
+  animation: petPop 0.5s ease-out;
+}
+@keyframes petPop {
+  0%   { transform: scale(1) rotate(0); }
+  25%  { transform: scale(0.86) rotate(-8deg); }
+  60%  { transform: scale(1.14) rotate(10deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+/* ---- AT Field ring — only when dsh is running ---- */
+[data-asuka-pet='ring'] {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+[data-asuka-pet='stage'][data-running='true'] > [data-asuka-pet='ring'] {
+  opacity: 1;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--eva-amber) 60deg,
+    var(--eva-red) 140deg,
+    transparent 220deg,
+    var(--eva-amber) 300deg,
+    transparent 360deg
+  );
+  -webkit-mask: radial-gradient(circle, transparent 53%, #000 56%);
+          mask: radial-gradient(circle, transparent 53%, #000 56%);
+  animation: atFieldSpin 1.4s linear infinite;
+}
+@keyframes atFieldSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Caption ---- */
+[data-asuka-pet='caption'] {
+  position: fixed;
+  right: clamp(10px, 1.2vw, 20px);
+  bottom: clamp(4px, 0.7vw, 8px);
+  padding: 2px 8px;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--eva-amber);
+  background: rgba(10, 6, 16, 0.7);
+  border: 1px solid rgba(255, 184, 102, 0.25);
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+  z-index: 22;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  [data-asuka-pet='figure'] { animation: none !important; }
+  [data-asuka-pet='stage'] { transition: none; }
+  [data-asuka-pet='ring'] { animation: none !important; }
+}

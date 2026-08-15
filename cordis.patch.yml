@@ -1,0 +1,4 @@
+# asuka-pet standalone pet bundle patch
+- insert:
+    - id: ui-asuka-pet
+      name: '@dsh-external/dsh-client-ui-asuka-pet'

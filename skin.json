@@ -1,0 +1,23 @@
+{
+  "id": "asuka-pet",
+  "name": "明日香桌宠",
+  "nameEn": "Asuka Desktop Pet",
+  "author": "sHen9Qi",
+  "tagline": "独立明日香 Q 版桌宠：点击互动、拖拽移动，DSH 运行显示 AT Field 光圈",
+  "description": "独立的明日香 Q 版桌宠插件，可与任何 DeepSeek Harness 皮肤搭配使用。点击互动、拖拽移动，DSH 运行时会显示 AT Field 光圈。",
+  "tags": [
+    "anime",
+    "eva",
+    "asuka",
+    "pet",
+    "desktop-pet",
+    "interactive"
+  ],
+  "accent": "#e83a20",
+  "bodyAttr": "data-dsh-asuka-pet",
+  "package": "@dsh-external/dsh-client-ui-asuka-pet",
+  "wiring": {
+    "id": "ui-asuka-pet",
+    "bundleWired": false
+  }
+}
