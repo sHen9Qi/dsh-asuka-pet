@@ -14,29 +14,71 @@
 
 ## 安装
 
+本插件不在 npm 上，从本地目录安装。下文的 `<插件目录>` 指 clone 下来的**绝对路径**。
+
 ```sh
-# 独立安装桌宠插件
-git clone https://github.com/sHen9Qi/asuka-pet.git
-cd asuka-pet
-dsh plugin --profile web add asuka-pet
+git clone https://github.com/sHen9Qi/dsh-asuka-pet.git
+```
+
+### Windows 桌面版（DeepSeek Harness Desktop）
+
+桌面版跑的是保留 profile `desktop`，它由 Electron 独占：npm 上那个 `dsh`
+会拒绝操作它，必须改用 App 自带的那份命令，并且**先把 App 完全退出**（含托盘）。
+
+```powershell
+# <APP> = DeepSeek Harness 的安装目录
+# 1. 完全退出 App，2. 安装到 desktop profile
+& "<APP>\resources\runtime\cli\bin\dsh.cmd" plugin --profile desktop add <插件目录>
+```
+
+安装成功后 `%USERPROFILE%\.dsh\profiles\desktop\package.json` 里会自动出现该依赖，
+并被追加进 `dsh.profile.bundles`（因为本包声明了 `dsh.bundle`）。重启 App 即生效。
+
+### Web 版
+
+```powershell
+dsh plugin --profile web add <插件目录>
+```
+
+### 确认加载
+
+启动后在页面控制台执行，返回当前构建号即说明 bundle 已加载：
+
+```js
+document.body.dataset.asukaPetBuild   // 例：'4mood-v9'
 ```
 
 ## 卸载
 
-```sh
+```powershell
+# Web 版
 dsh plugin --profile web remove @dsh-external/dsh-client-ui-asuka-pet
+
+# Windows 桌面版（先完全退出 App）
+& "<APP>\resources\runtime\cli\bin\dsh.cmd" plugin --profile desktop remove @dsh-external/dsh-client-ui-asuka-pet
 ```
+
+## 兼容性
+
+插件同时兼容 0.1.x 与 0.2.0 起的运行时。两者的客户端加载契约没有变化：
+`dsh.client` 声明、`exports["./client"]`、`window.__ModuleLoader__.load({ id, factory })`
+以及 `ctx.effect()` 都照旧。有变化的只有「一轮是否在跑」的 DOM 钩子，代码里两条判据都保留：
+
+| 判据 | 0.1.x | 0.2.0 起 |
+|---|---|---|
+| 提交瞬间 | 输入框 `[data-phase="submitting"\|"adjudicating"]` | 同左 |
+| 一轮进行中 | `[data-chat-flow] > [role="status"]` | `[data-chat-running]`（`role="status"` 现在嵌在其内，不再是直接子元素） |
+| 思考 / 工具 / 流式输出 | `[data-variant][data-state="running"]`、`[data-streaming]` | 同左 |
 
 ## 开发构建
 
 ```sh
 cd asuka-pet
 
-# 准备资源（替换桌宠图片）
-# 把新图片放到 assets
-# 运行 build 生成 pet-art.generated.ts
+# 首次需要装构建依赖：lightningcss，仅用于编译 CSS module
+npm install
 
-# 重新构建 lib/
+# 由 assets 重新生成 pet-art.generated.ts，并重建 lib/
 node scripts/build.cjs
 
 # 刷新页面 Ctrl+F5

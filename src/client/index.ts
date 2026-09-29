@@ -44,7 +44,7 @@ const SURPRISE_RATE = 0.6
 
 const OWNER = 'asuka-pet'
 /** Bump on every behaviour/color change — shown on the pet for staleness checks. */
-const BUILD_VERSION = '4mood-v8'
+const BUILD_VERSION = '4mood-v9'
 
 function pickLine(mood, exclude) {
   const pool = LINES.filter(l => l.mood === mood)
@@ -229,11 +229,15 @@ export function apply(ctx) {
   body.append(pet.stage)
 
   // AT Field ring spans user submit → agent fully outputs.
-  // Real DSH signals (dsh-client-ui-conversation):
-  //  - submitted:   textarea input phase "submitting"/"adjudicating" right after send
-  //  - turn open:   turn-status row — a direct [role="status"] child of [data-chat-flow]
-  //                 ("Deep diving…", rendered while the session's turn is running:
-  //                  covers first-token wait, thinking, tools, streaming)
+  // Real DSH signals:
+  //  - submitted:   composer input phase "submitting"/"adjudicating" right after
+  //                 send (dsh-client-ui-conversation)
+  //  - turn open:   running indicator — [data-chat-running] on the "Deep diving…"
+  //                 row (dsh-client-ui-chat), mounted only while the session's
+  //                 turn runs: covers first-token wait, thinking, tools, streaming.
+  //                 Older builds rendered a bare [role="status"] directly under
+  //                 [data-chat-flow]; that clause is kept so both DOM shapes light
+  //                 the ring (see README 兼容性).
   //  - thinking:    reasoning block  [data-variant="think"][data-state="running"]
   //  - tool call:   any tool row while in flight — [data-variant] carries the tool
   //                 kind (bash/code/web/…, dsh-client-ui-tool) or "others"
@@ -242,7 +246,7 @@ export function apply(ctx) {
   const sync = () => {
     const composer = document.querySelector("[data-phase='hero'], [data-phase='settling'], [data-phase='active']")
     const submitting = composer?.querySelector('[data-phase="submitting"], [data-phase="adjudicating"]') !== null
-    const turnActive = composer?.querySelector('[data-chat-flow] > [role="status"]') !== null
+    const turnActive = composer?.querySelector('[data-chat-flow] > [role="status"], [data-chat-running]') !== null
     const thinking = composer?.querySelector('[data-variant="think"][data-state="running"]') !== null
     const busy = composer?.querySelector('[data-variant]:not([data-variant="think"])[data-state="running"]') !== null
     const streaming = composer?.querySelector('[data-streaming]') !== null
