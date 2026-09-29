@@ -187,6 +187,14 @@
     var(--eva-amber) 300deg,
     transparent 360deg
   );
+  /* The circular outline must not depend on border-radius alone. The ring is a
+     square box (inset: 0) whose conic-gradient fills all four corners, and the
+     mask below only punches the centre hole — its `farthest-corner` gradient
+     paints the corners opaque, so it cannot round the outside. On hosts that
+     lose the border-radius clip of the background (composited layer with mask
+     plus a transform animation), the halo showed up as a rounded square.
+     clip-path pins the outer circle independently. */
+  clip-path: circle(50%);
   -webkit-mask: radial-gradient(circle, transparent 53%, #000 56%);
           mask: radial-gradient(circle, transparent 53%, #000 56%);
   animation: atFieldSpin 1.4s linear infinite;

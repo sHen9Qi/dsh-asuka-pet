@@ -70,6 +70,16 @@ dsh plugin --profile web remove @dsh-external/dsh-client-ui-asuka-pet
 | 一轮进行中 | `[data-chat-flow] > [role="status"]` | `[data-chat-running]`（`role="status"` 现在嵌在其内，不再是直接子元素） |
 | 思考 / 工具 / 流式输出 | `[data-variant][data-state="running"]`、`[data-streaming]` | 同左 |
 
+### 为什么 AT Field 光圈改用 `clip-path`
+
+光圈是个 `inset: 0` 的方形盒子：外圆靠 `border-radius: 50%`，中间的洞靠
+`mask: radial-gradient(circle, …)`。但这条 mask 的 `circle` 默认尺寸是 `farthest-corner`，
+渐变会把最后一个色标铺满整个盒子（含四角），**它没有能力把外缘切圆**。
+
+因此在某些宿主上（`mask` + `transform` 动画使元素被提升为合成层，背景的
+`border-radius` 裁切丢失），光圈会变成「外方内圆」。现在外圆由 `clip-path: circle(50%)`
+独立保证，`border-radius` 保留作兜底，两种宿主都是正圆。
+
 ## 开发构建
 
 ```sh

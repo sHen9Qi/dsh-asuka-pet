@@ -44,7 +44,7 @@ const SURPRISE_RATE = 0.6
 
 const OWNER = 'asuka-pet'
 /** Bump on every behaviour/color change — shown on the pet for staleness checks. */
-const BUILD_VERSION = '4mood-v9'
+const BUILD_VERSION = '4mood-v10'
 
 function pickLine(mood, exclude) {
   const pool = LINES.filter(l => l.mood === mood)
