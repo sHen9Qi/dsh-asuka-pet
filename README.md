@@ -76,9 +76,9 @@ dsh plugin --profile web remove @dsh-external/dsh-client-ui-asuka-pet
 `mask: radial-gradient(circle, …)`。但这条 mask 的 `circle` 默认尺寸是 `farthest-corner`，
 渐变会把最后一个色标铺满整个盒子（含四角），**它没有能力把外缘切圆**。
 
-因此在某些宿主上（`mask` + `transform` 动画使元素被提升为合成层，背景的
-`border-radius` 裁切丢失），光圈会变成「外方内圆」。现在外圆由 `clip-path: circle(50%)`
-独立保证，`border-radius` 保留作兜底，两种宿主都是正圆。
+因此在部分宿主上，当背景的 `border-radius` 裁切没有生效时，光圈就会变成
+「外方内圆」。现在外圆由 `clip-path: circle(50%)` 独立保证，`border-radius`
+保留作兜底，两种宿主都是正圆。
 
 ## 开发构建
 
